@@ -20,12 +20,8 @@ void sortAll();
 
 void main(void) {
     srand((unsigned) time(NULL));
-    
-    // printf("here");
-    
-//    test();
-//    sim();
-    sortAll();
+    // sortAll();
+    sim();
 }
 
 void sim() {
@@ -138,15 +134,10 @@ void sortAll() {
     comp.length = SIZE_InitRUle;
     BSTR_SetBits(&comp, "111111111111111111");
     
-    BitBoard brd[9];
-    BRD_Init(&brd[0], SIZE_BOARD, 1);
-    BRD_Init(&brd[1], SIZE_BOARD, 1);
-    BRD_Init(&brd[2], SIZE_BOARD, 2);
-    BRD_Init(&brd[3], SIZE_BOARD, 2);
-    BRD_Init(&brd[4], SIZE_BOARD, 2);
-    BRD_Init(&brd[5], SIZE_BOARD, 2);
-    BRD_Init(&brd[6], SIZE_BOARD, 4);
-    BRD_Init(&brd[7], SIZE_BOARD, 4);
+    BitBoard brd[8];
+    for(i = 0; i < 8; i++) {
+        BRD_InitRand(&brd[i], SIZE_BOARD);
+    }
     
     char line[] = {"     |     |     |     |     |     |     |    |\n"};
     char *rule, **state = (char**)malloc(sizeof(char*) * 8);;
@@ -154,7 +145,6 @@ void sortAll() {
     FILE *file, *boards_init;
     file = fopen("./../result/sorted.txt", "a");
     fputs("       Rule          | 75% | 75% | 50% | 50% | 50% | 50% | 25% | 25%|\n\n", file);
-//"       Rule          |
     boards_init = fopen("./../result/boards_init.txt", "a");
     for(i = 0; i < 8; i++) {
         fputs("\tBoard Number  " , boards_init);
@@ -169,27 +159,24 @@ void sortAll() {
         j = -4;
         for(i = 0; i < 8; i++) {
             BRD_Rest(&brd[i]);
+            cycle = 0;
             j += 6;
             while(cycle <= 20) {
                 if (cycle == 20) {
                     line[j] = '2';
-                    cycle = 0;
                     break;
                 }
                 BRD_UpdatBoard(&brd[i], r_512);
                 if (brd[i].aliveCount == 0) {
                     line[j] = '0';
-                    cycle = 0;
                     break;
                 } else if (brd[i].aliveCount == brd[i].dimention*brd[i].dimention) {
                     line[j] =  '1';
-                    cycle = 0;
                     break;
                 
                 }
                 cycle ++;
             }
-            BRD_Rest(&brd[i]);
         }
         fputs(line, file);
         c++;

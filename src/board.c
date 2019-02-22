@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <unistd.h>
 
 
 
@@ -20,13 +21,23 @@ void BRD_Init(BitBoard* brd, int dim, int state) {
     }
     brd->dimention = dim;
     brd->aliveCount = 0;
-    if(state == 1) {
-        BRD_RandomGenerator(brd, 2);
-    } else if (state > 1) {
-        BRD_RandomGenerator(brd, 4);
-    } else {
-        BRD_RandomGenerator(brd, 0.5);
+    BSTR_InitStateType(brd, state);
+    brd->initCount = brd->aliveCount;
+}
+
+void BRD_InitRand(BitBoard* brd, int dim) {
+    BitString b;
+    int i, j;
+    if (dim <= SIZE_BRD) {
+        for (i = 0; i < dim; i++) {
+            for (j = 0; j < dim; j++) {
+                brd->bits[i][j] = 0;
+            }
+        }
     }
+    brd->dimention = dim;
+    brd->aliveCount = 0;
+    BRD_RandomGenerator(brd);
     brd->initCount = brd->aliveCount;
 }
 
@@ -124,7 +135,7 @@ void BSTR_InitStateType(BitBoard* brd, int state) {
             brd->initState[m + 1][m + 1] = 1;
             break;
         case 5:
-            BRD_RandomGenerator(brd, 1);
+            BRD_RandomGenerator(brd);
             break;
         case 6:
             /*
@@ -186,16 +197,28 @@ int BRD_Equal(BitBoard brdA, BitBoard brdB) {
 }
 
 void BRD_Display(BitBoard brd) {
+    // char terminal_clearline [4];
+    // char terminal_moveup [4];
+
+    // sprintf(terminal_clearline, "%c[2K", 0x1B);
+    // sprintf(terminal_moveup, "%c[1A", 0x1B);
+
+    // for (int i = 0; i < 53; i++){
+    //     printf("%s", terminal_moveup);
+    //     printf("%s", terminal_clearline);
+    // }
+
     int i, j, d = brd.dimention;
     for (i = 0; i < d; i++) {
         printf("|");
         for (j = 0; j < d; j++) {
             if (brd.bits[i][j] == 0)    printf(" . ");
-	        else	printf(" # ");
-	    }
-        printf("|\n");
-    }
+            else	printf(" # ");
+        }
+    printf("|\n");
+    }   
     printf("\nTotal Alive Cells: %d\n", brd.aliveCount);
+    // sleep(1);
 }
 
 void BRD_ToFile(BitBoard brd, FILE *file) {
@@ -208,7 +231,7 @@ void BRD_ToFile(BitBoard brd, FILE *file) {
 	    }
         fputs("|\n", file);
     }
-    char liveCount[] = "\nTotal Alive Cells:       ";
+    char liveCount[] = "\nTotal Alive Cells:       \n";
     l=brd.aliveCount;
     char *buf = liveCount + 24;
     for (; l; l /= 10)  *--buf = l % 10 + '0';
@@ -260,9 +283,8 @@ void BRD_CopyBoard(BitBoard source, BitBoard* dest) {
     }
 }
 
-void BRD_RandomGenerator(BitBoard* brd, double chnc) {
+void BRD_RandomGenerator(BitBoard* brd) {
     int i, j, r, d = brd->dimention;
-    // srand((unsigned) time(NULL));
     for (i = 0; i < d; i++) {
         for (j = 0; j < d; j++) {
             r = (rand() % 2);

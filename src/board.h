@@ -15,6 +15,8 @@ typedef struct bitBoardType {
 
 void BRD_Init(BitBoard* brd, int dim, int state);
 
+void BRD_InitRand(BitBoard* brd, int dim);
+
 void BRD_Rest(BitBoard* brd);
 
 void BSTR_InitStateType(BitBoard* brd, int state);
@@ -37,6 +39,6 @@ int BRD_NeighboursNum(BitBoard brd, int row, int col);
 
 void BRD_CopyBoard(BitBoard source, BitBoard* dest);
 
-void BRD_RandomGenerator(BitBoard* brd, double chnc);
+void BRD_RandomGenerator(BitBoard* brd);
 
 #endif 
