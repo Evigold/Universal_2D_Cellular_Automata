@@ -19,11 +19,13 @@ void test();
 void sortAll();
 
 void main(void) {
+    srand((unsigned) time(NULL));
+    
     // printf("here");
     
 //    test();
 //    sim();
-sortAll();
+    sortAll();
 }
 
 void sim() {
@@ -122,9 +124,7 @@ void test() {
 }
 
 void sortAll() {
-    printf("here");
-    
-    int i, c = 0, cycle = 0;
+    int i, c = 0, cycle = 0, j = -4;
     double l;
     l = pow(2, 18);
     BitString r_18;
@@ -155,38 +155,41 @@ void sortAll() {
     file = fopen("./../result/sorted.txt", "a");
     fputs("       Rule          | 75% | 75% | 50% | 50% | 50% | 50% | 25% | 25%|\n\n", file);
 //"       Rule          |
-    // boards_init = fopen("./../results/boards_init.txt", "a");
-    // for(i = 0; i < 8; i++) {
-    //     fputs("\tBoard Number  " , boards_init);
-    //     char l = i%10 + '0';
-    //     fputs(&l, boards_init);
-    //     fputs(":\t\n",boards_init);
-    //     BRD_ToFile(brd[i], boards_init);
-    //     fputs("\n\n",boards_init);
-    // }
+    boards_init = fopen("./../result/boards_init.txt", "a");
+    for(i = 0; i < 8; i++) {
+        fputs("\tBoard Number  " , boards_init);
+        char l = i%10 + '0';
+        fputs(&l, boards_init);
+        fputs(":\t\n",boards_init);
+        BRD_ToFile(brd[i], boards_init);
+        fputs("\n\n",boards_init);
+    }
     do {
         BSTR_ToFile(r_18, file);
+        j = -4;
         for(i = 0; i < 8; i++) {
+            BRD_Rest(&brd[i]);
+            j += 6;
             while(cycle <= 20) {
                 if (cycle == 20) {
-                    line[2 + 6 * i] = '2';
+                    line[j] = '2';
                     cycle = 0;
-                    BRD_Rest(&brd[i]);
                     break;
                 }
                 BRD_UpdatBoard(&brd[i], r_512);
                 if (brd[i].aliveCount == 0) {
-                    line[2 + 6 * i] = '0';
+                    line[j] = '0';
                     cycle = 0;
                     break;
                 } else if (brd[i].aliveCount == brd[i].dimention*brd[i].dimention) {
-                    line[2 + 6 * i] =  '1';
+                    line[j] =  '1';
                     cycle = 0;
                     break;
                 
                 }
                 cycle ++;
             }
+            BRD_Rest(&brd[i]);
         }
         fputs(line, file);
         c++;
@@ -197,5 +200,5 @@ void sortAll() {
         BSTR_HemmingWeightGenerator(r_18, &r_512, (int) log2(SIZE_FinalRule));
     } while (!BSTR_Equal(r_18, comp));
     fclose(file);
-    // fclose(boards_init);
+    fclose(boards_init);
 }

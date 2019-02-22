@@ -262,10 +262,10 @@ void BRD_CopyBoard(BitBoard source, BitBoard* dest) {
 
 void BRD_RandomGenerator(BitBoard* brd, double chnc) {
     int i, j, r, d = brd->dimention;
-    srand((unsigned) time(NULL));
+    // srand((unsigned) time(NULL));
     for (i = 0; i < d; i++) {
         for (j = 0; j < d; j++) {
-            r = (rand() % (int)chnc);
+            r = (rand() % 2);
             if (r) {
                 brd->bits[i][j] = 1;
                 brd->initState[i][j] = 1;
