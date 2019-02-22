@@ -20,7 +20,13 @@ void BRD_Init(BitBoard* brd, int dim, int state) {
     }
     brd->dimention = dim;
     brd->aliveCount = 0;
-    BSTR_InitStateType(brd, state);
+    if(state == 1) {
+        BRD_RandomGenerator(brd, 2);
+    } else if (state > 1) {
+        BRD_RandomGenerator(brd, 4);
+    } else {
+        BRD_RandomGenerator(brd, 0.5);
+    }
     brd->initCount = brd->aliveCount;
 }
 
@@ -118,7 +124,7 @@ void BSTR_InitStateType(BitBoard* brd, int state) {
             brd->initState[m + 1][m + 1] = 1;
             break;
         case 5:
-            BRD_RandomGenerator(brd);
+            BRD_RandomGenerator(brd, 1);
             break;
         case 6:
             /*
@@ -254,12 +260,12 @@ void BRD_CopyBoard(BitBoard source, BitBoard* dest) {
     }
 }
 
-void BRD_RandomGenerator(BitBoard* brd) {
+void BRD_RandomGenerator(BitBoard* brd, double chnc) {
     int i, j, r, d = brd->dimention;
     srand((unsigned) time(NULL));
     for (i = 0; i < d; i++) {
         for (j = 0; j < d; j++) {
-            r = (rand() % 2);
+            r = (rand() % (int)chnc);
             if (r) {
                 brd->bits[i][j] = 1;
                 brd->initState[i][j] = 1;

@@ -37,6 +37,6 @@ int BRD_NeighboursNum(BitBoard brd, int row, int col);
 
 void BRD_CopyBoard(BitBoard source, BitBoard* dest);
 
-void BRD_RandomGenerator(BitBoard* brd);
+void BRD_RandomGenerator(BitBoard* brd, double chnc);
 
 #endif 

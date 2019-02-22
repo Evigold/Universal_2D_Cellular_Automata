@@ -10,6 +10,7 @@
 #define SIZE_InitRUle 18
 #define SIZE_FinalRule 512
 #define SIZE_BOARD 50
+#define CELL_NUM 2500
 
 void sim();
 
@@ -18,6 +19,8 @@ void test();
 void sortAll();
 
 void main(void) {
+    // printf("here");
+    
 //    test();
 //    sim();
 sortAll();
@@ -68,14 +71,15 @@ void test() {
     BSTR_HemmingWeightGenerator(r_18, &r_512, (int) log2(SIZE_FinalRule));
 
     BitBoard brd;
-    BRD_Init(&brd, SIZE_BOARD, 7);
 
+    BRD_Init(&brd, SIZE_BOARD, 2);
+    printf("board initiated");
 
-    FILE *ca, *cd, *cl, *cr;
-    ca = fopen("./../results/glider_b/Group_A.txt", "a");
-    cd = fopen("./../results/glider_b/AllDie.txt", "a");
-    cl = fopen("./../results/glider_b/AllLive.txt", "a");
-    cr = fopen("./../results/glider_b/InitialState.txt", "a");
+    // FILE *ca, *cd, *cl, *cr;
+    // ca = fopen("./../results/glider_b/Group_A.txt", "a");
+    // cd = fopen("./../results/glider_b/AllDie.txt", "a");
+    // cl = fopen("./../results/glider_b/AllLive.txt", "a");
+    // cr = fopen("./../results/glider_b/InitialState.txt", "a");
 
 
 
@@ -83,22 +87,22 @@ void test() {
     comp.length = SIZE_InitRUle;
     BSTR_SetBits(&comp, "111111111111111111");
     
-    BRD_ToFile(brd, cr);
-
+    // BRD_ToFile(brd, cr);
+    printf("before start sim");
     do {
-        while(cycle <= 20) {
-            if (cycle == 20) {
-                BSTR_ToFile(r_18, ca);
+        while(cycle <= 50) {
+            if (cycle == 50) {
+                // BSTR_ToFile(r_18, ca);
                 cycle = 0;
                 break;
             }
             BRD_UpdatBoard(&brd, r_512);
             if (brd.aliveCount == 0) {
-                BSTR_ToFile(r_18, cd);
+                // BSTR_ToFile(r_18, cd);
                 cycle = 0;
                 break;
-            } else if (brd.aliveCount == brd.dimention*brd.dimention) {
-                BSTR_ToFile(r_18, cl);
+            } else if (brd.aliveCount == CELL_NUM) {
+                // BSTR_ToFile(r_18, cl);
                 cycle = 0;
                 break;
             
@@ -111,16 +115,17 @@ void test() {
         BSTR_HemmingWeightGenerator(r_18, &r_512, (int) log2(SIZE_FinalRule));
         BRD_Init(&brd, SIZE_BOARD, 7);
     } while (!BSTR_Equal(r_18, comp));
-    fclose(ca);
-    fclose(cd);
-    fclose(cl);
-    fclose(cr);
+    // fclose(ca);
+    // fclose(cd);
+    // fclose(cl);
+    // fclose(cr);
 }
 
 void sortAll() {
-     int i, cycle = 0;
-    double c, l;
-    c= 0;
+    printf("here");
+    
+    int i, c = 0, cycle = 0;
+    double l;
     l = pow(2, 18);
     BitString r_18;
     r_18.length = SIZE_InitRUle;
@@ -132,48 +137,50 @@ void sortAll() {
     BitString comp;
     comp.length = SIZE_InitRUle;
     BSTR_SetBits(&comp, "111111111111111111");
-
+    
     BitBoard brd[9];
-    BRD_Init(&brd[0], SIZE_BOARD, 0);
+    BRD_Init(&brd[0], SIZE_BOARD, 1);
     BRD_Init(&brd[1], SIZE_BOARD, 1);
     BRD_Init(&brd[2], SIZE_BOARD, 2);
-    BRD_Init(&brd[3], SIZE_BOARD, 3);
-    BRD_Init(&brd[4], SIZE_BOARD, 4);
-    BRD_Init(&brd[5], SIZE_BOARD, 5);
-    BRD_Init(&brd[6], SIZE_BOARD, 5);
-    BRD_Init(&brd[7], SIZE_BOARD, 6);
-    BRD_Init(&brd[8], SIZE_BOARD, 7);
-
+    BRD_Init(&brd[3], SIZE_BOARD, 2);
+    BRD_Init(&brd[4], SIZE_BOARD, 2);
+    BRD_Init(&brd[5], SIZE_BOARD, 2);
+    BRD_Init(&brd[6], SIZE_BOARD, 4);
+    BRD_Init(&brd[7], SIZE_BOARD, 4);
+    
+    char line[] = {"     |     |     |     |     |     |     |    |\n"};
+    char *rule, **state = (char**)malloc(sizeof(char*) * 8);;
+    rule = line;
     FILE *file, *boards_init;
-    file = fopen("./../results_n/sorted.txt", "a");
-    fputs("       Rule          |  0x0   |  1x1   |  2x2   |  3x3   |3x3-0-c | rand-1 | rand-2 |blinker | glider |\n\n", file);
-
-    boards_init = fopen("./../results_n/boards_init.txt", "a");
-    for(i = 0; i < 9; i++) {
-        fputs("\tBoard Number  " , boards_init);
-        char l = i%10 + '0';
-        fputs(&l, boards_init);
-        fputs(":\t\n",boards_init);
-        BRD_ToFile(brd[i], boards_init);
-        fputs("\n\n",boards_init);
-    }
-
+    file = fopen("./../result/sorted.txt", "a");
+    fputs("       Rule          | 75% | 75% | 50% | 50% | 50% | 50% | 25% | 25%|\n\n", file);
+//"       Rule          |
+    // boards_init = fopen("./../results/boards_init.txt", "a");
+    // for(i = 0; i < 8; i++) {
+    //     fputs("\tBoard Number  " , boards_init);
+    //     char l = i%10 + '0';
+    //     fputs(&l, boards_init);
+    //     fputs(":\t\n",boards_init);
+    //     BRD_ToFile(brd[i], boards_init);
+    //     fputs("\n\n",boards_init);
+    // }
     do {
         BSTR_ToFile(r_18, file);
-        for(i = 0; i < 9; i++) {
+        for(i = 0; i < 8; i++) {
             while(cycle <= 20) {
                 if (cycle == 20) {
-                    fputs("   2    |", file);
+                    line[2 + 6 * i] = '2';
                     cycle = 0;
+                    BRD_Rest(&brd[i]);
                     break;
                 }
                 BRD_UpdatBoard(&brd[i], r_512);
                 if (brd[i].aliveCount == 0) {
-                    fputs("   0    |", file);
+                    line[2 + 6 * i] = '0';
                     cycle = 0;
                     break;
                 } else if (brd[i].aliveCount == brd[i].dimention*brd[i].dimention) {
-                    fputs("   1    |", file);
+                    line[2 + 6 * i] =  '1';
                     cycle = 0;
                     break;
                 
@@ -181,21 +188,14 @@ void sortAll() {
                 cycle ++;
             }
         }
-        fputs("\n", file);
+        fputs(line, file);
         c++;
-        printf("percent :%% %lf\n", (double)(c/l*100));
+        if(c % 100 == 1) {
+            printf("percent :%% %lf\n", (double)(c/l*100));
+        }
         BSTR_AddOne(&r_18);
         BSTR_HemmingWeightGenerator(r_18, &r_512, (int) log2(SIZE_FinalRule));
-        BRD_Rest(&brd[0]);
-        BRD_Rest(&brd[1]);
-        BRD_Rest(&brd[2]);
-        BRD_Rest(&brd[3]);
-        BRD_Rest(&brd[4]);
-        BRD_Rest(&brd[5]);
-        BRD_Rest(&brd[6]);
-        BRD_Rest(&brd[7]);
-        BRD_Rest(&brd[8]);
     } while (!BSTR_Equal(r_18, comp));
     fclose(file);
-    fclose(boards_init);
+    // fclose(boards_init);
 }
